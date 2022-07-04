@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"enigmacamp.com/go_product/config"
 	"enigmacamp.com/go_product/delivery/controller"
 	"enigmacamp.com/go_product/repository"
 	"enigmacamp.com/go_product/usecase"
@@ -28,9 +29,10 @@ func (p *appServer) Run() {
 
 func Server() *appServer {
 	r := gin.Default()
+	c := config.NewConfig()
 	repo := repository.NewProductRepository()
 	usecase := usecase.NewProductRegistrationUseCase(repo)
-	host := fmt.Sprintf("%s:%s", "0.0.0.0", "8888")
+	host := fmt.Sprintf("%s", c.Url)
 	return &appServer{
 		productRegistrationUseCase: usecase,
 		engine:                     r,
