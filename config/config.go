@@ -5,7 +5,6 @@ import "os"
 type ApiConfig struct {
 	Url string
 }
-
 type Config struct {
 	ApiConfig
 }

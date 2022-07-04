@@ -3,20 +3,19 @@ package delivery
 import (
 	"enigmacamp.com/go_product/config"
 	"enigmacamp.com/go_product/delivery/controller"
-	"enigmacamp.com/go_product/repository"
-	"enigmacamp.com/go_product/usecase"
+	"enigmacamp.com/go_product/manager"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 type appServer struct {
-	productRegistrationUseCase usecase.ProductRegistrationUseCase
-	engine                     *gin.Engine
-	host                       string
+	useCaseManager manager.UseCaseManager
+	engine         *gin.Engine
+	host           string
 }
 
 func (p *appServer) initHandlers() {
-	controller.NewProductController(p.engine, p.productRegistrationUseCase)
+	controller.NewProductController(p.engine, p.useCaseManager.ProductRegistrationUseCase())
 }
 
 func (p *appServer) Run() {
@@ -30,12 +29,12 @@ func (p *appServer) Run() {
 func Server() *appServer {
 	r := gin.Default()
 	c := config.NewConfig()
-	repo := repository.NewProductRepository()
-	usecase := usecase.NewProductRegistrationUseCase(repo)
+	repoManager := manager.NewRepositoryManager()
+	usecaseManager := manager.NewUseCaseManager(repoManager)
 	host := fmt.Sprintf("%s", c.Url)
 	return &appServer{
-		productRegistrationUseCase: usecase,
-		engine:                     r,
-		host:                       host,
+		useCaseManager: usecaseManager,
+		engine:         r,
+		host:           host,
 	}
 }
