@@ -1,6 +1,9 @@
 package repository
 
-import "enigmacamp.com/go_product/model"
+import (
+	"enigmacamp.com/go_product/model"
+	"gorm.io/gorm"
+)
 
 type ProductRepository interface {
 	Add(newProduct *model.Product) error
@@ -8,19 +11,21 @@ type ProductRepository interface {
 }
 
 type productRepository struct {
-	productDb []model.Product
+	db *gorm.DB
 }
 
 func (p *productRepository) Add(newProduct *model.Product) error {
-	p.productDb = append(p.productDb, *newProduct)
-	return nil
+	return p.db.Create(newProduct).Error
 }
 
 func (p *productRepository) Retrieve() []model.Product {
-	return nil
+	var products []model.Product
+	p.db.Find(&products)
+	return products
 }
 
-func NewProductRepository() ProductRepository {
+func NewProductRepository(db *gorm.DB) ProductRepository {
 	repo := new(productRepository)
+	repo.db = db
 	return repo
 }

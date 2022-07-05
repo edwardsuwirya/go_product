@@ -25,11 +25,11 @@ func (p *appServer) Run() {
 		panic(err)
 	}
 }
-
 func Server() *appServer {
 	r := gin.Default()
 	c := config.NewConfig()
-	repoManager := manager.NewRepositoryManager()
+	infraManager := manager.NewInfraManager(c)
+	repoManager := manager.NewRepositoryManager(infraManager)
 	usecaseManager := manager.NewUseCaseManager(repoManager)
 	host := fmt.Sprintf("%s", c.Url)
 	return &appServer{

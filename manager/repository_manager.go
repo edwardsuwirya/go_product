@@ -7,12 +7,15 @@ type RepositoryManager interface {
 }
 
 type repositoryManager struct {
+	infraManager InfraManager
 }
 
-func (r *repositoryManager) ProductRepo() repository.ProductRepository {
-	return repository.NewProductRepository()
+func (r repositoryManager) ProductRepo() repository.ProductRepository {
+	return repository.NewProductRepository(r.infraManager.DbConn())
 }
 
-func NewRepositoryManager() RepositoryManager {
-	return &repositoryManager{}
+func NewRepositoryManager(manager InfraManager) RepositoryManager {
+	return repositoryManager{
+		infraManager: manager,
+	}
 }

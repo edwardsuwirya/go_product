@@ -10,12 +10,12 @@ type useCaseManager struct {
 	repoManager RepositoryManager
 }
 
-func (u *useCaseManager) ProductRegistrationUseCase() usecase.ProductRegistrationUseCase {
+func (u useCaseManager) ProductRegistrationUseCase() usecase.ProductRegistrationUseCase {
 	return usecase.NewProductRegistrationUseCase(u.repoManager.ProductRepo())
 }
 
 func NewUseCaseManager(repoManager RepositoryManager) UseCaseManager {
-	return &useCaseManager{
+	return useCaseManager{
 		repoManager: repoManager,
 	}
 }
