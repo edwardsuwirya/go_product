@@ -3,11 +3,23 @@ package api
 import (
 	"enigmacamp.com/go_product/delivery/api/response"
 	"github.com/gin-gonic/gin"
+	"github.com/mitchellh/mapstructure"
 )
 
 type BaseApi struct {
 }
 
+func (b *BaseApi) ParseRequestFormData(c *gin.Context, requestModel interface{}, postFormKey ...string) error {
+	mapRes := make(map[string]interface{})
+	for _, v := range postFormKey {
+		mapRes[v] = c.PostForm(v)
+	}
+	err := mapstructure.Decode(mapRes, &requestModel)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func (b *BaseApi) ParseRequestBody(c *gin.Context, body interface{}) error {
 	if err := c.ShouldBindJSON(body); err != nil {
 		return err

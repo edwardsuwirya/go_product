@@ -16,7 +16,8 @@ type ProductController struct {
 
 func (cc *ProductController) registerNewProduct(ctx *gin.Context) {
 	var newProduct model.Product
-	err := cc.ParseRequestBody(ctx, &newProduct)
+	//err := cc.ParseRequestBody(ctx, &newProduct)
+	err := cc.ParseRequestFormData(ctx, &newProduct, "productId", "productName")
 	if err != nil {
 		cc.Failed(ctx, utils.RequiredError())
 		return
