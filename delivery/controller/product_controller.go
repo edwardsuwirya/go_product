@@ -1,36 +1,32 @@
 package controller
 
 import (
+	"enigmacamp.com/go_product/delivery/api"
 	"enigmacamp.com/go_product/model"
 	"enigmacamp.com/go_product/usecase"
+	"enigmacamp.com/go_product/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type ProductController struct {
 	router  *gin.Engine
 	usecase usecase.ProductRegistrationUseCase
+	api.BaseApi
 }
 
 func (cc *ProductController) registerNewProduct(ctx *gin.Context) {
-	productId := ctx.PostForm("productId")
-	productName := ctx.PostForm("productName")
-	newProduct := model.Product{
-		ProductId:   productId,
-		ProductName: productName,
-	}
-	err := cc.usecase.Register(&newProduct)
+	var newProduct model.Product
+	err := cc.ParseRequestBody(ctx, &newProduct)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"status":  "FAILED",
-			"message": "Error when creating product",
-		})
+		cc.Failed(ctx, utils.RequiredError())
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"message": newProduct,
-	})
+	err = cc.usecase.Register(&newProduct)
+	if err != nil {
+		cc.Failed(ctx, err)
+		return
+	}
+	cc.Success(ctx, newProduct)
 }
 
 func NewProductController(r *gin.Engine, usecase usecase.ProductRegistrationUseCase) *ProductController {
